@@ -10,3 +10,5 @@ plan:
 增加model 模型相关工作.
 增加特征分组.
 增加外部模块支持.
+
+具体流程参考model/sub_train.sh 和train.sh
