@@ -51,7 +51,10 @@ def trans_value_to_threds(inp_list, tgt, lo=0, hi=None):
     if tgt > inp_list[hi - 1] or tgt < inp_list[lo]:
         return None
     if tgt == inp_list[lo]:
-        return inp_list[0], inp_list[0]
+        if len(inp_list) == 1:
+            return inp_list[0], inp_list[0]
+        else:
+            return inp_list[0], inp_list[1]
     if tgt == inp_list[hi - 1]:
         return inp_list[hi - 2], inp_list[hi - 1]
 
@@ -98,6 +101,7 @@ class Conf(object):
 
         def pair(ars):
             fea_name_list = self.name.split("&")
+            print self.name
             fea_key_list = [conf_dict[name].key_list for name in fea_name_list]
             product_list = itertools.product(*fea_key_list)
             self.key_list = ["#".join(x) for x in product_list]
@@ -170,7 +174,7 @@ class Feature(object):
 
     def number(self, fea_name, fea_value):
         def wash(value):
-            if value == "NULL":
+            if value == "NULL" or value == "":
                 value = 0
             value = float(value)
             return 0 if value < 0 or value > 50000000 else value
@@ -178,6 +182,7 @@ class Feature(object):
         fea_value = wash(fea_value)
         cf = self.fea_conf[fea_name]
         rs = trans_value_to_threds(cf.arrs_list, float(fea_value))
+
         if rs:
             l, h = rs
             k = GOLD_SPLIT.join([fea_name, "_".join(map(lambda x: str(float('%0.3f' % float(x))), [l, h]))])

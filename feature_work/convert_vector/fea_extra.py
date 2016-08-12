@@ -32,6 +32,7 @@ def init_arguments():
 args = init_arguments()[0]
 file = cst.app_file if args.mode == "train" else cst.test_file
 data_file = os.path.join(root, file)
+print "data_file:",data_file
 feature_lines = os.path.join(root, "_".join([cst.app, "features_lines"]))
 
 with codecs.open(data_file, "r", "utf8") as f:
@@ -59,6 +60,7 @@ def pair(fc, fea_value, fea):
 def one_line(line):
     with cst.TimeRecord("initial") as _:
         fea = map(lambda x: x.strip(), line.split("\t"))[:len(FEA.fea_number_dict)]
+        # print len(FEA.fea_number_dict),len(fea),line
         one_lable = str(int(fea[FEA.fea_number_dict[label_name] - 1]))
 
     def one_fea((n, fea_value)):
@@ -77,7 +79,7 @@ def one_line(line):
             return fun_key[fc.method.split("#")[0]](fc, fea_value, fea)
 
     rs = filter(lambda x: x, map(one_fea, enumerate(fea + [0] * (max_len - len(fea)), start=1)))
-    if rs and  max_feature_id_num == rs[-1][0]:
+    if rs and max_feature_id_num == rs[-1][0]:
         data_line = " ".join(map(lambda x: ":".join(map(str, x)), sorted(rs, key=lambda x: int(x[0]))))
     else:
         data_line = " ".join(map(lambda x: ":".join(map(str, x)), sorted(rs, key=lambda x: int(x[0])))

@@ -8,7 +8,7 @@ import multiprocessing as mp
 import re
 
 feature_ids_path = os.path.join(root, "_".join([cst.app, "features_ids"]))
-model_xishu_ids_sort = os.path.join(root, "model_xishu_ids_sort")
+model_xishu_ids_sort = os.path.join(root, "model_xishu_ids_sort_"+cst.version)
 feature_lines_path = os.path.join(root, "_".join([cst.app, "features_lines"]))
 feature_lines_with_info = os.path.join(root, "_".join([cst.app, "features_lines_with_info"]))
 # 读取所有特征

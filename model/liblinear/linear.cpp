@@ -2272,9 +2272,10 @@ model* train(const problem *prob, const parameter *param)
 		model_->nr_feature=n;
 	model_->param = *param;
 	model_->bias = prob->bias;
-
+	printf("?????");
 	if(check_regression_model(model_))
 	{
+		printf("check_regression_model yes");
 		model_->w = Malloc(double, w_size);
 		for(i=0; i<w_size; i++)
 			model_->w[i] = 0;
@@ -2284,6 +2285,7 @@ model* train(const problem *prob, const parameter *param)
 	}
 	else
 	{
+		printf("check_regression_model no");
 		int nr_class;
 		int *label = NULL;
 		int *start = NULL;
@@ -2311,8 +2313,11 @@ model* train(const problem *prob, const parameter *param)
 				fprintf(stderr,"WARNING: class label %d specified in weight is not found\n", param->weight_label[i]);
 			else
 				weighted_C[j] *= param->weight[i];
+			// printf("param->weight[i] is %f, weighted_C[j] is %f",param->weight[i],param->weight);
 		}
-
+		// pirnt
+		for(i=0;i<nr_class;i++)
+			printf("weighted_C[i] is %f",weighted_C[i]);
 		// constructing the subproblem
 		feature_node **x = Malloc(feature_node *,l);
 		for(i=0;i<l;i++)

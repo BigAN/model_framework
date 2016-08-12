@@ -13,8 +13,8 @@ feature_ext_root_path = os.path.join(root_path, "feature_work")
 cvt_root_path = os.path.join(feature_ext_root_path, "convert_vector")
 config_path = os.path.join(feature_ext_root_path, "config")
 
-app_name = "user_feature_origin"
-version = "v_1_test_origin"
+app_name = "user_features"
+version = "v_21_jizhong"
 app = "_".join([app_name, version])
 app_file = "user_feature_raw_dup"  # user_feature_raw_dup user_features_test
 test_file = "user_features_test"  # user_features_test

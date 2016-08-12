@@ -2,24 +2,25 @@
 
 
 train_data=user_feature_raw
-version=v_1_11__fix_user_suggest_type
+version=v_21_jizhong
 app_name=user_features
 app=${app_name}_${version}
 features_lines=${app_name}_${version}_features_lines
 test_file=user_features_test
 
 da && cp user_feature_raw user_feature_raw_bk
+wc user_feature_raw
 #da && cp user_feature_raw_bk user_feature_raw
-#将neg_type 为1 3 的转为punish_status = 1
-da&& awk -F '\t' 'BEGIN{OFS="\t"}{if($(NF-1)==1 || $(NF-1)==3 || $(NF-1)==0 || $(NF-1)=="NULL"){print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw
-da&& awk -F '\t' 'BEGIN{OFS="\t"}{if(($(NF-1)==1 ||$(NF-1)==3) && $(NF-1)!= "NULL" && NR!=1){$NF=1;print$0}else{print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw
+#将neg_type 为1 3 的转为punish_status = 1, 过掉neg_type = 2
+da&& awk -F '\t' 'BEGIN{OFS="\t"}{if($(NF-1)!=2){print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw# 46 NF-1
+da&& awk -F '\t' 'BEGIN{OFS="\t"}{if(($46==1 ||$46==3) && $46!= "NULL" && NR!=1){$NF=1;print$0}else{print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw
 #过滤数据
-da && awk -F '\t' 'BEGIN{OFS="\t"}{if($NF==1){if($31>0.6){print $0}} else {if($NF==0){if( $22 < 30000 && $27 < 20 && $26 <22 &&$31 < 25&& $37<15){print $0}}}}' ${train_data} > tmp && mv tmp ${train_data}
+da && awk -F '\t' 'BEGIN{OFS="\t"}{if($NF==1){if($31>1){print $0}} else {if($NF==0){if( $22 < 30000 && $27 < 20 && $26 <22 &&$31 < 25&& $37<15){print $0}}}}' ${train_data} > tmp && mv tmp ${train_data}
 
-#sort
-da && awk -F '\t' '{if($NF==1){print $0}else{phone_list[$1]=$0}}END{for(k in phone_list){print phone_list[k]}}' $train_data > tmp && mv tmp $train_data
+#sort 为了结果的label的 正负正确.
+da && awk -F '\t' 'NR>1{if($NF==1){print $0}else{phone_list[$1]=$0}}END{for(k in phone_list){print phone_list[k]}}' $train_data > tmp && mv tmp $train_data
 #dup
-cat $train_data | awk 'BEGIN{pos_num=800000;}{if($NF==1){for(i=0;i<40;i++){print $0;}} else if(pos_num>=0){ print $0;pos_num-=1}}' > ${train_data}_dup
+cat $train_data | awk 'BEGIN{pos_num=1500000;}{if($NF==1){for(i=0;i<116;i++){print $0;}} else if(pos_num>=0){ print $0;pos_num-=1}}' > ${train_data}_dup
 cat ${train_data}_dup| awk '{print $NF}'|sort|uniq -c #校验数据
 
 #变量定义d
@@ -59,7 +60,6 @@ awk -F \t '{if($1==1 && $2==0 ){print 1}}' rs|wc -l >> val # fn
 awk  '{d[NR]=$0}END{print d[4]/(d[4]+d[1])}' val
 
 
-
 # 构建正,负样本的测试文件.
 awk -F '\t' '{if(NR==1 ||$NF == 1){print $0}}' user_feature_raw > user_feature_raw_label_1
 awk -F '\t' '{if(NR==1 ||$NF == 0){print $0}}' user_feature_raw > user_feature_raw_label_0
@@ -73,7 +73,7 @@ features_ids_name=${app}_features_ids
 cat $features_ids_name >  user_features_features_ids_sort
 tail -n+7 user_feature_model > model_xishu
 awk -F '&#&' 'FNR==NR{flag[$2]=1;line[$2]=$0;next}{if(flag[FNR]==1){printf("%s\t%s\n",line[FNR],$0)}}' $features_ids_name model_xishu > model_xishu_ids
-sort -t$'\t' -k 2gr model_xishu_ids > model_xishu_ids_sort
+sort -t$'\t' -k 2gr model_xishu_ids > model_xishu_ids_sort_${version}
 
 #tran id to name
 #把feature_lines 转化为带特征name的
