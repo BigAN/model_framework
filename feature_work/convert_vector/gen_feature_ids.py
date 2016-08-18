@@ -43,5 +43,5 @@ with codecs.open(feas_reconstruct_path, 'r', 'utf8') as f, codecs.open(features_
     rs = filter(lambda x: not max([c in x for c in list(exclude_conf)]), feature_id_list)
     f_w.write("\n".join(rs))
 
-print "\n".join(rs)
+# print "\n".join(rs)
 print "after filter features number is {0},before filter,number features are {1}".format(len(rs), len(feature_id_list))

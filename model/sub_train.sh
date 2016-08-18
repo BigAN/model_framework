@@ -1,4 +1,4 @@
-version=v_20_from_train_data
+version=v_27_zhenghe_pingjia_jizhong
 app_name=user_features
 
 train_data=user_feature_raw
@@ -12,9 +12,9 @@ cd /Users/dongjian/PycharmProjects/UserDetected/feature_work/convert_vector && p
 cd /Users/dongjian/PycharmProjects/UserDetected/feature_work/convert_vector && python fea_extra.py -m train
 cd ~/data && head ${features_lines}
 
-cd ~/data &&/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/train -v 5 -e 0.1 -s 0 -c 0.5  ${features_lines}
+cd ~/data &&/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/train -v 5 -e 0.1 -s 7 -c 0.5  ${features_lines}
 cd ~/data && rm user_feature_model
-/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/train  -e 0.1 -s 0 -c 0.5 /Users/dongjian/data/${features_lines} /Users/dongjian/data/user_feature_model
+/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/train  -e 0.1 -s 7 -c 0.5 /Users/dongjian/data/${features_lines} /Users/dongjian/data/user_feature_model
 
 #test
 python /Users/dongjian/PycharmProjects/UserDetected/feature_work/convert_vector/fea_extra.py -m test
@@ -39,7 +39,7 @@ cd ~/data &&paste user_features_for_paste ${test_file} > user_features_rs #将pr
 cd ~/data &&paste user_features_rs user_features_value_for_paste > ${features_lines}_final #将value 和原始文件组合起来
 head -1  ${features_lines}_final
 
-cd ~/data &&awk -F '\t' '{if($1>0&&NR!=1){print $0}}' ${features_lines}_final | sort -k 1 -r -n -g > user_features_rs_above_9_tmp && head -n 1 user_features_rs | cat - user_features_rs_above_9_tmp > user_features_rs_above_9_ttmp && mv user_features_rs_above_9_ttmp ${features_lines}_rs_all
+cd ~/data &&awk -F '\t' '{if($1>0.95&&NR!=1){print $0}}' ${features_lines}_final | sort -k 1 -r -n -g > user_features_rs_above_9_tmp && head -n 1 user_features_rs | cat - user_features_rs_above_9_tmp > user_features_rs_above_9_ttmp && mv user_features_rs_above_9_ttmp ${features_lines}_rs_all
 wc ${features_lines}_rs_all
 
 #csv
@@ -48,5 +48,5 @@ cd ~/data && tr -s "," "#" < ${features_lines}_rs_all |awk -F '\t' 'BEGIN{OFS=",
 cd ~/data && echo ${features_lines}_rs_prob_60.csv && open ${features_lines}_rs_prob_60.csv
 
 
-(cd ~/data&& awk 'BEGIN{srand()}{b[rand()NR]=$0}END{for(x in b)print b[x]}' user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob.csv.tmp > tmp && head -1 user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob.csv|cat - tmp > tmp_1 && head -n 1 tmp_1 && tail -n+2  tmp_1|tail -n 60|sort -t$'\t' -k 1rn) >  user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob_60.csv
-cd ~/data && echo user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob_60.csv && open user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob_60.csv
+#(cd ~/data&& awk 'BEGIN{srand()}{b[rand()NR]=$0}END{for(x in b)print b[x]}' user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob.csv.tmp > tmp && head -1 user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob.csv|cat - tmp > tmp_1 && head -n 1 tmp_1 && tail -n+2  tmp_1|tail -n 60|sort -t$'\t' -k 1rn) >  user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob_60.csv
+#cd ~/data && echo user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob_60.csv && open user_features_v_1_16__fix_mean_visit_fir_one_poi_features_lines_rs_prob_60.csv

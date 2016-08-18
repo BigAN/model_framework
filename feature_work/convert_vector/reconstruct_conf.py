@@ -57,7 +57,7 @@ def remove_dup(value_list):
 
 def process_cate(conf, value, frac, v):
     filter_sets = set(conf.filter_threds) if conf.filter_threds else []
-    return filter(lambda x: x not in filter_sets, remove_dup(FEA.fea_number_value_list[conf.name]))
+    return filter(lambda x: x not in filter_sets and " " not in x and len(x)!=0, remove_dup(FEA.fea_number_value_list[conf.name]))
 
 
 def wash_data(data):
@@ -140,7 +140,7 @@ def process(fea_number_value_list):
     print_fea_vector(data)
     conf_vs = [(conf, v) for conf, v in generate_conf(fea_number_value_list)]
     import multiprocessing as mp
-    pool = mp.Pool(8)
+    # pool = mp.Pool(8)
     rs = map(one_conf, conf_vs)
     with codecs.open(rs_file, 'w', 'utf8') as f:
         print rs

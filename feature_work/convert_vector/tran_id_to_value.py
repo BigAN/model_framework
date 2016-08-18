@@ -39,9 +39,12 @@ with codecs.open(feature_lines_with_info, 'w', 'utf8') as f:
             val = key_dict.get(ele, None)
             if val :  # val 不为空 且 系数不为0
                 return "___".join([val[0], val[-1]])
-
-        return "\t".join(
+        try:
+            return "\t".join(
                 sorted(filter(lambda x: x, map(one_ele, data[1])), key=lambda x: -float(x.split("___")[1])))
+        except Exception as e:
+            print map(one_ele, data[1])
+            raise e
     import multiprocessing as mp
     pool = mp.Pool(32)
     rs = pool.map(one_line, feature_lines)
