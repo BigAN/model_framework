@@ -53,7 +53,7 @@ most_food_lianxu_danliang,number#freq,0#5,False,6.0#7.0#8.0#9.0#10.0#11.0#13.0#1
 comment_rate,number#freq#3,0#0.5,False,0.508#0.745#0.92#1.0
 comment_5_rate,number#dis#5,0#0.5,False,0.525#0.62#0.715#0.81#0.905#1.0
 comment_1_rate,number#dis#5,0#0.5,False,0.571#0.657#0.743#0.829#0.914#1.0
-top1_poi_avg_score,number#dis#3,0#0.1,False,0.143#1.762#3.381#5.0
+top1_poi_avg_score,number#dis#5,0#0.1&4#5,False,0.143#0.904#1.665#2.426#3.186#3.947
 tail_poi_avg_score,number#dis#5,0#0.1,False,0.111#1.089#2.067#3.044#4.022#5.0
 reason_id,none,,True,
 punish_status,cate,,True,
