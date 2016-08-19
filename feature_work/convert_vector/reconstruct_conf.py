@@ -12,6 +12,7 @@ FEA.read_conf()
 
 data_file = os.path.join(root, cst.app_file)
 rs_file = os.path.join(cst.app_root_path, 'feas_reconstruct')
+print data_file
 print rs_file
 open(rs_file, 'w').close()
 
@@ -57,7 +58,8 @@ def remove_dup(value_list):
 
 def process_cate(conf, value, frac, v):
     filter_sets = set(conf.filter_threds) if conf.filter_threds else []
-    return filter(lambda x: x not in filter_sets and " " not in x and len(x)!=0, remove_dup(FEA.fea_number_value_list[conf.name]))
+    return filter(lambda x: x not in filter_sets and " " not in x and len(x) != 0,
+                  remove_dup(FEA.fea_number_value_list[conf.name]))
 
 
 def wash_data(data):
@@ -73,7 +75,7 @@ def process_number(conf, value, frac, v):
 
     after_sorted = filter(lambda x: wash_data(x),
                           sorted([x.strip() for x in v if cst.isfloat(x)], key=lambda x: float(x)))
-    after_filtered = filter(lambda x: not float(conf.filter_threds[0]) <= float(x) <= float(conf.filter_threds[1]),
+    after_filtered = filter(lambda x: conf.filter_method(x),
                             after_sorted) if conf.filter_threds else after_sorted
     sorted_v = after_filtered
 
@@ -116,13 +118,13 @@ def process_pair(conf, value, frac, v):
 def one_conf((conf, v)):
     def print_conf(conf, values):
         print ','.join(map(str,
-                           [conf.name, conf.method, "#".join(conf.filter_threds) if conf.filter_threds else "",
+                           [conf.name, conf.method,conf.filter_threds if conf.filter_threds else "",
                             conf.status,
                             '#'.join([v.strip() for v in values]).replace(",", "0x32")
                             if conf.method != "none" and conf.name != cst.label_name else ""]))
 
         return ','.join(map(str,
-                            [conf.name, conf.method, "#".join(conf.filter_threds) if conf.filter_threds else "",
+                            [conf.name, conf.method, conf.filter_threds if conf.filter_threds else "",
                              conf.status,
                              '#'.join([v.strip() for v in values]).replace(",", "0x32")
                              if conf.method != "none" and conf.name != cst.label_name else ""]))

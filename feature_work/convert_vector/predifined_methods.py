@@ -68,12 +68,32 @@ def trans_value_to_threds(inp_list, tgt, lo=0, hi=None):
     return inp_list[lo - 1], inp_list[lo]
 
 
+def gen_filter(filter_threds):
+    def ffilter(inp):
+        def _filter((l, h)):
+            return float(l) <= float(inp) <= float(h)
+
+        return not max(map(_filter, filter_threds))
+
+    return ffilter
+
+
 class Conf(object):
+    def construct_filer_threds(self, filter_threds):
+        opion_dict = {
+            "number": gen_filter(map(lambda x: x.split("#"),
+                                     filter_threds.split("&"))) if filter_threds else None,
+            "cate": filter_threds.split("#") if filter_threds else None
+        }
+
+        return opion_dict.get(self.method.split("#")[0])
+
     def __init__(self, name, method, filter_threds, status, ars):
         self.name = name
         self.method = method
         self.status = str2bool(status)
-        self.filter_threds = filter_threds.split("#") if filter_threds else None
+        self.filter_threds = filter_threds if filter_threds else None
+        self.filter_method = self.construct_filer_threds(filter_threds)
         self.ars = ars.strip()
         self.values_list = None
         self.feature_list = None
@@ -90,11 +110,14 @@ class Conf(object):
     def parse_ars(self, conf_dict):
         def number(ars):
             self.values_list = ars.split("#")
+            self.filter_threds = gen_filter(map(lambda x: x.split("#"),
+                                                self.filter_threds.split("&"))) if self.filter_threds else None
             self.feature_list = ["_".join([self.values_list[ar], self.values_list[ar + 1]]) for ar in
                                  xrange(0, len(self.values_list) - 1)]
             self.key_list = ["__".join([self.name, fea_value]) for fea_value in self.feature_list]
 
         def cate(ars):
+            self.filter_threds = self.filter_threds.split("#") if self.filter_threds else None
             self.values_list = ars.split("#")
             self.feature_list = self.values_list
             self.key_list = ["__".join([self.name, fea_value]) for fea_value in self.feature_list]

@@ -14,10 +14,16 @@ awk 'NR>2{print $0}' user_features_test > tmp && cp tmp user_features_test
 
 da && cp user_feature_raw user_feature_raw_bk
 wc user_feature_raw
+wc user_features_test
+head user_feature_raw
+head user_features_test
+
+awk '{print $NF}' user_feature_raw|sort|uniq -c
+
 #da && cp user_feature_raw_bk user_feature_raw
 #将neg_type 为1 3 的转为punish_status = 1, 过掉neg_type = 2
 #da&& awk -F '\t' 'BEGIN{OFS="\t"}{if($(NF-1)!=2){print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw# 46 NF-1
-da&& awk -F '\t' 'BEGIN{OFS="\t"}{if(($46==1 ) && $46!= "NULL" && NR!=1){$NF=1;print$0}else if($46!=3){print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw
+#da&& awk -F '\t' 'BEGIN{OFS="\t"}{if(($46==1 ) && $46!= "NULL" && NR!=1){$NF=1;print$0}else if($46!=3){print $0}}' user_feature_raw > tmp && mv tmp user_feature_raw
 #过滤数据
 #da && awk -F '\t' 'BEGIN{OFS="\t"}{if($NF==1){if($31>1){print $0}} else {if($NF==0){if( $22 < 30000 && $27 < 20 && $26 <22 &&$31 < 25&& $37<15){print $0}}}}' ${train_data} > tmp && mv tmp ${train_data}
 
