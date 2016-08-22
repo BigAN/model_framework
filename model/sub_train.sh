@@ -39,7 +39,7 @@ cd ~/data &&paste user_features_for_paste ${test_file} > user_features_rs #将pr
 cd ~/data &&paste user_features_rs user_features_value_for_paste > ${features_lines}_final #将value 和原始文件组合起来
 head -1  ${features_lines}_final
 
-cd ~/data &&awk -F '\t' '{if($1>0.9&&NR!=1&&$25>15&& $61 !~ /dm/ && $61 !~/mean_is_use_envelope/ && $61 !~ /recipient_address_num/&& $61 !~ /dist_food/){print $0}}' ${features_lines}_final | sort -k 1 -r -n -g > user_features_rs_above_9_tmp && head -n 1 user_features_rs | cat - user_features_rs_above_9_tmp > user_features_rs_above_9_ttmp && mv user_features_rs_above_9_ttmp ${features_lines}_rs_all
+cd ~/data &&awk -F '\t' '{if($1>0.9&&NR!=1&&$25>15&&( $61 ~ /one_day_high/ || $61 ~/mean_dis/ ||$61 ~ //)){print $0}}' ${features_lines}_final | sort -k 1 -r -n -g > user_features_rs_above_9_tmp && head -n 1 user_features_rs | cat - user_features_rs_above_9_tmp > user_features_rs_above_9_ttmp && mv user_features_rs_above_9_ttmp ${features_lines}_rs_all
 wc ${features_lines}_rs_all
 
 #csv
