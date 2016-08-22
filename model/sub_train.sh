@@ -1,4 +1,4 @@
-version=v_27_zhenghe_pingjia_jizhong
+version=v_28_zhenghe_pingjia_jizhong
 app_name=user_features
 
 train_data=user_feature_raw
@@ -20,6 +20,16 @@ cd ~/data && rm user_feature_model
 python /Users/dongjian/PycharmProjects/UserDetected/feature_work/convert_vector/fea_extra.py -m test
 /Users/dongjian/PycharmProjects/UserDetected/model/liblinear/predict -b 1 /Users/dongjian/data/${features_lines} /Users/dongjian/data/user_feature_model /Users/dongjian/data/user_features_predict
 
+#train_error
+
+cat ~/data/user_features_predict|tail -n+2 | cut -b 1  > ~/data/y_predict
+cat $test_file|awk 'NR!=1{print $NF}' > y_test
+paste y_test y_predict > rs
+awk -F \t '{if($1==1 && $2==1 ){print 1}}' rs|wc -l > val # tp
+awk -F \t '{if($1==0 && $2==0 ){print 1}}' rs|wc -l >> val # tn
+awk -F \t '{if($1==0 && $2==1 ){print 1}}' rs|wc -l >> val # fp
+awk -F \t '{if($1==1 && $2==0 ){print 1}}' rs|wc -l >> val # fn
+
 #print model
 features_ids_name=${app}_features_ids
 cat $features_ids_name >  user_features_features_ids_sort
@@ -39,7 +49,7 @@ cd ~/data &&paste user_features_for_paste ${test_file} > user_features_rs #将pr
 cd ~/data &&paste user_features_rs user_features_value_for_paste > ${features_lines}_final #将value 和原始文件组合起来
 head -1  ${features_lines}_final
 
-cd ~/data &&awk -F '\t' '{if($1>0.9&&NR!=1&&$25>15&&( $61 ~ /one_day_high/ || $61 ~/mean_dis/ ||$61 ~ //)){print $0}}' ${features_lines}_final | sort -k 1 -r -n -g > user_features_rs_above_9_tmp && head -n 1 user_features_rs | cat - user_features_rs_above_9_tmp > user_features_rs_above_9_ttmp && mv user_features_rs_above_9_ttmp ${features_lines}_rs_all
+cd ~/data &&awk -F '\t' '{if($1>0.7&&NR!=1&&$25>15&&( $61 ~ /one_day_high/ || $61 ~/mean_dis/ ||$61 ~ /comment/)){print $0}}' ${features_lines}_final | sort -k 1 -r -n -g > user_features_rs_above_9_tmp && head -n 1 user_features_rs | cat - user_features_rs_above_9_tmp > user_features_rs_above_9_ttmp && mv user_features_rs_above_9_ttmp ${features_lines}_rs_all
 wc ${features_lines}_rs_all
 
 #csv
