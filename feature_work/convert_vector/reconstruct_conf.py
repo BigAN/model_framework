@@ -17,8 +17,8 @@ print rs_file
 open(rs_file, 'w').close()
 
 with codecs.open(data_file, "r", "utf8") as f:
-    ins = f.readlines()
-    data = ins[1:]
+    ins = [l for i, l in enumerate(f) if i % 3 == 1 and i != 0]
+    data = ins
 
 label_name = "punish_status"
 
@@ -118,7 +118,7 @@ def process_pair(conf, value, frac, v):
 def one_conf((conf, v)):
     def print_conf(conf, values):
         print ','.join(map(str,
-                           [conf.name, conf.method,conf.filter_threds if conf.filter_threds else "",
+                           [conf.name, conf.method, conf.filter_threds if conf.filter_threds else "",
                             conf.status,
                             '#'.join([v.strip() for v in values]).replace(",", "0x32")
                             if conf.method != "none" and conf.name != cst.label_name else ""]))
