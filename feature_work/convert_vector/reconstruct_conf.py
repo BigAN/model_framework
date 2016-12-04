@@ -17,7 +17,7 @@ print rs_file
 open(rs_file, 'w').close()
 
 with codecs.open(data_file, "r", "utf8") as f:
-    ins = [l for i, l in enumerate(f) if i % 3 == 1 and i != 0]
+    ins = [l for i, l in enumerate(f) if i % 10 == 1 and i != 0]
     data = ins
 
 label_name = "punish_status"
@@ -116,18 +116,22 @@ def process_pair(conf, value, frac, v):
 
 
 def one_conf((conf, v)):
-    def print_conf(conf, values):
+    def print_conf(conf, values, is_exists=False):
+        ars_list = '#'.join([v.strip() for v in values]).replace(",", "0x32") \
+            if conf.method != "none" and conf.name != cst.label_name  else ""
+
         print ','.join(map(str,
                            [conf.name, conf.method, conf.filter_threds if conf.filter_threds else "",
-                            conf.status,
-                            '#'.join([v.strip() for v in values]).replace(",", "0x32")
-                            if conf.method != "none" and conf.name != cst.label_name else ""]))
+                            conf.status, ars_list if not is_exists else conf.ars]))
 
         return ','.join(map(str,
                             [conf.name, conf.method, conf.filter_threds if conf.filter_threds else "",
                              conf.status,
-                             '#'.join([v.strip() for v in values]).replace(",", "0x32")
-                             if conf.method != "none" and conf.name != cst.label_name else ""]))
+                             ars_list if not is_exists else conf.ars]))
+
+    if len(conf.ars) > 0:
+        print "conf.ars already exists", conf.ars
+        return print_conf(conf, [], True)
 
     key, value, frac = cst.parse_method(conf.method)  # number freq 5 key, value, frac
     if key != "none":
@@ -141,11 +145,12 @@ def one_conf((conf, v)):
 def process(fea_number_value_list):
     print_fea_vector(data)
     conf_vs = [(conf, v) for conf, v in generate_conf(fea_number_value_list)]
+    # print conf_vs
     import multiprocessing as mp
     # pool = mp.Pool(8)
     rs = map(one_conf, conf_vs)
     with codecs.open(rs_file, 'w', 'utf8') as f:
-        print rs
+        # print rs
         f.write("\n".join(rs))
 
 

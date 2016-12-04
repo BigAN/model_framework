@@ -13,8 +13,8 @@ feature_ext_root_path = os.path.join(root_path, "feature_work")
 cvt_root_path = os.path.join(feature_ext_root_path, "convert_vector")
 config_path = os.path.join(feature_ext_root_path, "config")
 
-app_name = "good_user"
-version = "v1_for_test"
+app_name = "user_features"
+version = "v_33_expand_feas_for_more_cases"
 app = "_".join([app_name, version])
 app_file = "user_feature_raw_dup"  # user_feature_raw_dup user_features_test
 test_file = "user_features_test"  # user_features_test
@@ -22,7 +22,7 @@ app_root_path = os.path.join(config_path, app_name)
 label_name = "punish_status"
 
 def safe_int(x):
-    return int(x) if x!='' and  x != "NULL" else 0
+    return int(x) if x!='' else 0
 
 def wash(value):
     if value == "NULL":

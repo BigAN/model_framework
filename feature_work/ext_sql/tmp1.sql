@@ -1,4 +1,5 @@
-'274139410',
+select phone from mart_waimai_risk.dim_user_relation__userid_phone__line
+where user_id in ('274139410',
 '368473032',
 '592379335',
 '10210733',
@@ -97,4 +98,4 @@
 '62033726',
 '70837132',
 '213722993',
-'148091645'
+'148091645')

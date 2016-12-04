@@ -58,10 +58,17 @@ def pair(fc, fea_value, fea):
 
 
 def one_line(line):
+
     with cst.TimeRecord("initial") as _:
         fea = map(lambda x: x.strip(), line.split("\t"))[:len(FEA.fea_number_dict)]
-        # print len(FEA.fea_number_dict),len(fea),line
-        one_lable = str(int(fea[FEA.fea_number_dict[label_name] - 1]))
+        try:
+            one_lable = str(cst.safe_int(fea[FEA.fea_number_dict[label_name] - 1]))
+        except Exception as e:
+            print e
+            print len(FEA.fea_number_dict),len(fea),line
+            print FEA.fea_number_dict
+            print fea
+            return '\t'.join(["0", max_feature_id_num + ":0"])
 
     def one_fea((n, fea_value)):
         '''
@@ -77,14 +84,18 @@ def one_line(line):
         fun_key = {"cate": normal, "origin": normal, "number": normal, "none": none, "pair": pair}
         if fc.name != cst.label_name:
             return fun_key[fc.method.split("#")[0]](fc, fea_value, fea)
-
-    rs = filter(lambda x: x, map(one_fea, enumerate(fea + [0] * (max_len - len(fea)), start=1)))
-    if rs and max_feature_id_num == rs[-1][0]:
-        data_line = " ".join(map(lambda x: ":".join(map(str, x)), sorted(rs, key=lambda x: int(x[0]))))
+    try:
+        rs = filter(lambda x: x, map(one_fea, enumerate(fea + [0] * (max_len - len(fea)), start=1)))
+        if rs and max_feature_id_num == rs[-1][0]:
+            data_line = " ".join(map(lambda x: ":".join(map(str, x)), sorted(rs, key=lambda x: int(x[0]))))
+        else:
+            data_line = " ".join(map(lambda x: ":".join(map(str, x)), sorted(rs, key=lambda x: int(x[0])))
+                                 + [max_feature_id_num + ":0"])
+    except Exception as e:
+        print e
+        return '\t'.join([one_lable, ""])
     else:
-        data_line = " ".join(map(lambda x: ":".join(map(str, x)), sorted(rs, key=lambda x: int(x[0])))
-                             + [max_feature_id_num + ":0"])
-    return '\t'.join([one_lable, data_line])
+        return '\t'.join([one_lable, data_line])
 
 
 import time
@@ -92,6 +103,6 @@ import time
 t = time.time()
 with cst.TimeRecord("total") as _:
     pool = mp.Pool(32)
-    rs = pool.map(one_line, data)
+    rs = filter(lambda x:x,pool.map(one_line, data))
     with codecs.open(feature_lines, 'w', 'utf8') as f:
         f.write('\n'.join(rs))

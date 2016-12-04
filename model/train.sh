@@ -2,7 +2,7 @@
 
 
 train_data=user_feature_raw
-version=v_27_zhenghe_pingjia_jizhong
+version=v1_for_test
 app_name=user_features
 app=${app_name}_${version}
 features_lines=${app_name}_${version}_features_lines
@@ -30,7 +30,7 @@ awk '{print $NF}' user_feature_raw|sort|uniq -c
 #sort 为了结果的label的 正负正确.
 da && awk -F '\t' 'NR>1{if($NF==1){print $0}else{phone_list[$1]=$0}}END{for(k in phone_list){print phone_list[k]}}' $train_data > tmp && mv tmp $train_data
 #dup
-cat $train_data | awk 'BEGIN{pos_num=1500000;}{if($NF==1){for(i=0;i<70;i++){print $0;}} else if(pos_num>=0){ print $0;pos_num-=1}}' > ${train_data}_dup
+cat $train_data | awk 'BEGIN{pos_num=1300000;}{if($NF==1){for(i=0;i<50;i++){print $0;}} else if(pos_num>=0){ print $0;pos_num-=1}}' > ${train_data}_dup
 cat ${train_data}_dup| awk '{print $NF}'|sort|uniq -c #校验数据
 
 #变量定义d
@@ -56,9 +56,7 @@ cat test_file| cut -b 1 > y_test
 
 da &&/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/train -v 5 -e 0.1 -s 7 -c 0.5  ${features_lines}
 da && rm user_feature_model
-/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/train  -e 0.1 -s 7 -c 0.5 /Users/dongjian/data/${features_lines} /Users/dongjian/data/user_feature_model
-/Users/dongjian/PycharmProjects/UserDetected/model/liblinear/predict -b 1 /Users/dongjian/data/test_file /Users/dongjian/data/user_feature_model /Users/dongjian/data/predict
-cat ~/data/predict|tail -n+2 | cut -b 1  > ~/data/y_predict
+dcat ~/data/predict|tail -n+2 | cut -b 1  > ~/data/y_predict
 
 paste y_test y_predict > rs
 awk -F \t '{if($1==1 && $2==1 ){print 1}}' rs|wc -l > val # tp

@@ -1,8 +1,16 @@
-SELECT
-  a.phone AS recipient_phone,
-  a.*
-FROM
-  mart_waimai_risk.dim_user_property_risk a
-WHERE
-  a.last_date >= '20150901' AND a.punish_status = 0
-LIMIT 100000
+max(fact_ord.total) as total ,
+max(fact_ord.wm_order_pay_type) as wm_order_pay_type ,
+max(fact_ord.user_actual_loc_dist_m) as user_actual_loc_dist_m ,
+max(fact_ord.user_actual_loc_in_sp_area) as user_actual_loc_in_sp_area ,
+max(fact_ord.dt) as dt ,
+max(fact_ord.recipient_phone) as recipient_phone ,
+max(fact_ord.recipient_address) as recipient_address ,
+max(fact_ord.is_pre_order) as is_pre_order ,
+max(fact_ord.binded_phone) as binded_phone ,
+max(fact_ord.origin_recipient_phone) as origin_recipient_phone ,
+max(FROM_UNIXTIME(fact_ord.ctime, 'k')) as hour ,
+max(fact_ord.pay_type) as pay_type ,
+max(fact_ord.remark) as remark ,
+max(peisong.org_detail_type) as org_detail_type ,
+max(income.shuadan_income) as shuadan_income ,
+max(suspect.is_suspect) as is_suspect,

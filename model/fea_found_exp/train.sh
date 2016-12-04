@@ -1,0 +1,1 @@
+head -1  user_features_test | cat - user_feature_raw_dup > tmp && cp tmp user_feature_raw_dedup_with_title_data
